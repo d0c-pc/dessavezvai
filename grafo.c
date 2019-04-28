@@ -12,6 +12,7 @@ typedef struct grafo{
     int vertices;
     int arestas;
     bool matriz[200][200]; // Matriz de Adjacencias
+    int min_custo;
 } GRAFO;
 
 GRAFO* criarGrafo(int v, int a){
@@ -62,14 +63,13 @@ int menorCusto(GRAFO* gr, int custo[], bool abertos[]){
 
 void imprimirPrim(GRAFO* gr, int p[]){
     int i;
-    for(i = 0; i < gr->vertices; i++){
-        //printf("acabou");
-        printf("%d -> %d  %d \n", p[i], i, gr->matriz[i][i]);
+    for(i = 1; i < gr->vertices; i++){
+        printf("%d \n", i);
+        printf("%d -> %d  \n", p[i], i);
     }
 }
 
 void prim(GRAFO* gr){
-    imprimirMatriz(gr);
     int p[gr->vertices]; // Um arranjo que armazena os predecessores
     int custo[gr->vertices]; //
     bool abertos[gr->vertices]; 
@@ -83,23 +83,19 @@ void prim(GRAFO* gr){
     custo[0] = 0;
     p[0] = -1;
 
-    imprimirMatriz(gr);
     for(cont = 0; cont < gr->vertices; cont++){
         int u = menorCusto(gr, custo, abertos);
-        //printf("%d -", u);
         abertos[u] = false;
-
+        gr->min_custo += gr->matriz[p[u]][u];
         for(k = 0; k < gr->vertices; k++) 
-            if(gr->matriz[u][k] && abertos[k] == true && gr->matriz[u][k] < custo[k]){
-                //printf(", %d, ", k);
+            if(gr->matriz[u][k] /*&& abertos[k] == true*/ && gr->matriz[u][k] < custo[k]){
                 p[k] = u;
                 custo[k] = gr->matriz[u][k];
             }
     }
 
-    imprimirMatriz(gr);
-
     printf("\n\n\n");
+    printf("Custo Total da Arvore: %d \n\n", gr->min_custo);
     imprimirPrim(gr, p);
 }
 
@@ -122,7 +118,5 @@ int main(void){
     printf("\n\n\n");
 
     prim(gr);
-
-    imprimirMatriz(gr);
     return 0;
 }
